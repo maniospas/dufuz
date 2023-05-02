@@ -1,4 +1,4 @@
-from dufuz.core import Environment, Domain
+from dufuz.core import Environment, Domain, Number
 from dufuz.tnorm import lukasiewicz
 import torch
 
@@ -19,7 +19,12 @@ class DiscreteEnvironment(Environment):
         self.upper = upper
         self.strategy = strategy
 
-    def number(self, value, form=lambda x: abs(x)):
+    def number(self, value, form=None):
+        if isinstance(value, dict):
+            assert form is None
+            return Number(list(value.values()), Domain(list(value.keys()), self))
+        if form is None:
+            form = lambda x: abs(x)
         if isinstance(value, list):
             return [self.number(element, form) for element in value]
         # TODO: implement the following with torch
@@ -31,7 +36,7 @@ class DiscreteEnvironment(Environment):
             prob -= self.tol/self.breadth
             ret[value+offset] = form(prob)
             ret[value-offset] = form(prob)
-        return Domain(list(ret.keys()), self).set(ret)
+        return Number(list(ret.values()), Domain(list(ret.keys()), self))
 
     def discretize(self, values, numbers):
         values, numbers = super().discretize(values, numbers)

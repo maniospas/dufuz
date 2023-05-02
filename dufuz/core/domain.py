@@ -1,6 +1,5 @@
 import torch
 from dufuz.core.number import Number
-import numpy as np
 
 
 class Domain:
@@ -23,7 +22,8 @@ class Domain:
         return self.elements.size()
 
     def set(self, values):
-        # this is the equilvanet non-tf implementation
+        raise Exception("Domain.set should not be called. Use Environment.number() with a dictionary instead.")
+        import numpy as np
         spread = np.zeros(shape=self.elements.shape)
         for k, v in values.items():
             spread[self.pos[k]] = v

@@ -9,8 +9,8 @@ with open("README.md", "r") as file:
     long_description = file.read()
 
 setuptools.setup(
-    name='pygrank',
-    version='0.2.12',
+    name='dufuz',
+    version='0.0.1',
     author="Emmanouil (Manios) Krasanakis",
     author_email="maniospas@hotmail.com",
     description="Discrete numeric fuzzy sets in Python algorithms.",

@@ -75,7 +75,7 @@ def bubblesort(values):
 tic = time()
 bubblesort(values)
 print('Running time', time()-tic)
-print([mmean(val) for val in values])
+print([wmean(val) for val in values])
 from matplotlib import pyplot as plt
 _, axs = plt.subplots(len(values), 1, sharex="all", sharey="all")
 for ax, val in zip(axs, values):

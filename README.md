@@ -45,4 +45,13 @@ The list can be defined to hold triangle fuzzy numbers per:
 ```python
 values = list(range(8))
 values = env.number(values)
+bubblesort(values)
+```
+
+Finally, results can be defuzzified:
+```python
+from dufuz.defuzzify import wmean
+
+print([wmean(val) for val in values])
+# [0.0, 1.0, 2.7, 3.5, 3.5, 4.3, 6.0, 7.0]
 ```
