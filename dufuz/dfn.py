@@ -1,0 +1,47 @@
+from dufuz.core import Environment, Domain
+from dufuz.tnorm import lukasiewicz
+import torch
+
+
+class DiscreteEnvironment(Environment):
+    def __init__(self,
+                 device='cuda',
+                 tnorm=lukasiewicz,
+                 tol=0.01,
+                 breadth=1,
+                 lower=None,
+                 upper=None,
+                 strategy="modulo"):
+        super().__init__(device=device, tnorm=tnorm)
+        self.tol = tol
+        self.breadth = breadth
+        self.lower = lower
+        self.upper = upper
+        self.strategy = strategy
+
+    def number(self, value, form=lambda x: abs(x)):
+        if isinstance(value, list):
+            return [self.number(element, form) for element in value]
+        # TODO: implement the following with torch
+        ret = {value: 1}
+        offset = 0
+        prob = 1
+        while offset+self.tol < self.breadth:
+            offset += self.tol
+            prob -= self.tol/self.breadth
+            ret[value+offset] = form(prob)
+            ret[value-offset] = form(prob)
+        return Domain(list(ret.keys()), self).set(ret)
+
+    def discretize(self, values, numbers):
+        values, numbers = super().discretize(values, numbers)
+        numbers = numbers if hasattr(numbers, "numpy") else torch.tensor(numbers, device=self.device)
+        if self.lower and self.upper and self.strategy == "modulo":
+            # makes the number filed a closed finite set
+            numbers = torch.where(numbers < self.upper, numbers, numbers+(-self.upper+self.lower))
+            numbers = torch.where(numbers > self.lower, numbers, numbers+(-self.lower+self.upper))
+        elif (self.lower or self.upper) and self.strategy == "clip":
+            numbers = torch.clip(numbers, self.lower, self.upper)
+
+        rounded_numbers = torch.round(numbers/self.tol)*self.tol
+        return values, rounded_numbers
