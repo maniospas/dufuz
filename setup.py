@@ -6,7 +6,17 @@ import setuptools
 # - deploy : twine upload dist/*
 
 with open("README.md", "r") as file:
-    long_description = file.read()
+    long_description = """
+# DUFuz
+Incorporating discrete numeric fuzzy sets in Python algorithms.
+These sets are more general than fuzzy numbers.
+
+**Dependencies**: `numpy`, `torch`, `matplotlib`, `ply`<br>
+**Contact**: Manios Krasanakis (maniospas@hotmail.com)<br>
+**License**: Apache 2<br>
+<br>
+Documentation in the [github](https://github.com/maniospas/dufuz) page.
+    """
 
 setuptools.setup(
     name='dufuz',

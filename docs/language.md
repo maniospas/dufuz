@@ -16,10 +16,17 @@ as `z = x if condition else y`.
 After installing the package via `pip install dufuz`
 you can run a DUFuz script per: 
 ```cmd
-python -m dufuz example_script.dfz --tol 0.01 --device gpu:0
+python -m dufuz example_script.dfz --tol 0.01 --device cuda:0
 ```
 where tolerance is the numerical tolerance of fuzzy 
-numeric calculations.
+numeric calculations. Use pytorch to find valid devices
+install on your machines.
+
+:warning: For fast running time of fuzzy arithmetics,
+ensure that *tol<sup> -2</sup>* is smaller
+than then number of GPU cores. Running the interpreter
+on CPUs can be very slow, but if you must do it
+select some coarse tolerance, such as *0.1*.
 
 ## Language specification
 The DUFuz language is planned to replicate the following Python
@@ -47,8 +54,19 @@ is *2Y*). You can use `?` instead of `?1`. This lets
 you define numeric fuzzy sets via the discrete
 F-transform, for example as `5? or 6?2`.
 
-You can use the `.plot()` method of the Python API
-from within the DUFuz interpreter.
+You can use the `.plot()` method that the underlying
+Python API attaches to the fuzzy sets
+the DUFuz interpreter works with. You can also
+import other methods, such as defuzzifiers.
+For example, you can add the following to your script:
+
+```python
+from dufuz.defuzzify import cmean
+
+values = ... # a list of fuzzy values
+for val in values:
+    print(cmean(val))
+```
 
 
 

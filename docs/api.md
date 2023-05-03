@@ -1,8 +1,8 @@
-# Python API for dufuz
+# Python API for DUFuz
 
 First create a discrete environment for spawning and executing operations 
 on numeric fuzzy sets. Provide a GPU `torch` device to the environment
-to parallelize execution. The device is used as one logical core.
+to parallelize execution. The device is utilized as one logical core.
 
 ```python
 import torch
@@ -15,10 +15,14 @@ env = DiscreteEnvironment(tnorm=tnorm.lukasiewicz,
 ```
 
 You can write algorithms involving normal Python operations.
-If-then-else statements that involve fuzzy comparisons 
-take the form 
+An if-then-else statements on a fuzzy `condition` 
+takes the form 
 `condition.choose(result if true, result if false)`
-and fuzzy boolean arithmetics use the `&,|` operations.
+where results can be numeric fuzzy sets.
+Fuzzy boolean operations override the `&,|,~` operations
+in place of the logical `and, or, not` respectively.
+The DUFuz interpreter provides a pure Pythonic representation
+of these operations.
 
 As a demonstration. the following code implements the 
 bubblesort algorithm for a list of fuzzy numbers.
