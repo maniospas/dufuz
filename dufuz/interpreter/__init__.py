@@ -1,0 +1,1 @@
+from dufuz.interpreter.interpret import interpret

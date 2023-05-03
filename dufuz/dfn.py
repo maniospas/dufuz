@@ -19,7 +19,9 @@ class DiscreteEnvironment(Environment):
         self.upper = upper
         self.strategy = strategy
 
-    def number(self, value, form=None):
+    def number(self, value, form=None, breadth=None):
+        if breadth is None:
+            breadth = self.breadth
         if isinstance(value, dict):
             assert form is None
             return Number(list(value.values()), Domain(list(value.keys()), self))
@@ -31,14 +33,16 @@ class DiscreteEnvironment(Environment):
         ret = {value: 1}
         offset = 0
         prob = 1
-        while offset+self.tol < self.breadth:
+        while offset+self.tol < breadth:
             offset += self.tol
-            prob -= self.tol/self.breadth
+            prob -= self.tol/breadth
             ret[value+offset] = form(prob)
             ret[value-offset] = form(prob)
         return Number(list(ret.values()), Domain(list(ret.keys()), self))
 
     def discretize(self, values, numbers):
+        if numbers.dtype == torch.bool:
+            return values, numbers
         values, numbers = super().discretize(values, numbers)
         numbers = numbers if hasattr(numbers, "numpy") else torch.tensor(numbers, device=self.device)
         if self.lower and self.upper and self.strategy == "modulo":
@@ -48,5 +52,5 @@ class DiscreteEnvironment(Environment):
         elif (self.lower or self.upper) and self.strategy == "clip":
             numbers = torch.clip(numbers, self.lower, self.upper)
 
-        rounded_numbers = torch.round(numbers/self.tol)*self.tol
+        rounded_numbers = torch.floor(numbers/self.tol+0.5)*self.tol
         return values, rounded_numbers

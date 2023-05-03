@@ -49,10 +49,11 @@ class Environment:
         values, elements = self.discretize(values, elements)
         values, elements = self.reduce(values, elements)
         # find non-zero positions and gather respective values (memberships) and elements (method outputs)
-        positions = (values != 0)# > 1.E-12)
-        if positions.size() != values.size():
-            values = torch.masked_select(values, positions)
-            elements = torch.masked_select(elements, positions)
+        if elements.dtype != torch.bool:
+            positions = (values != 0)# > 1.E-12)
+            if positions.size() != values.size():
+                values = torch.masked_select(values, positions)
+                elements = torch.masked_select(elements, positions)
         for monitor in self.monitors:
             monitor.notify(elements.nelement(), None)
         return Number(values, Domain(elements, self))
@@ -107,13 +108,13 @@ class Environment:
         return Number(1-a.values, a.domain)
 
     def Not(self, a):
-        return 1-a #Number(a.values, Domain(1-a.domain.elements, a.domain.env))
+        return self.apply(torch.logical_not, a)#Number(1-a.values, a.domain)
 
     def And(self, a, b):
         return self.apply(operator.mul, a, b)
 
     def Or(self, a, b):
-        return self.apply(lambda x, y: x + y - x * y, a, b)
+        return self.combine(a, b)#self.apply(lambda x, y: x + y - x * y, a, b)
 
     def combine(self, number1, number2):
         if number1 is None:
@@ -125,14 +126,32 @@ class Environment:
         values, elements = self.reduce(values, elements)
         return Number(values, Domain(elements, self))
 
+    def setlist(self, values, item, value):
+        if not isinstance(value, Number):
+            value = Number([1], Domain([value], self))
+        if not isinstance(item, Number):
+            item = Number([1], Domain([item], self))
+        else:
+            item = self.apply(torch.round, item)
+        for i, membership in item.todict().items():
+            #if membership == 0:
+            #    continue
+            i = int(i)
+            if i < 0 or i >= len(values):
+                continue
+            membership = Number([membership], Domain([1], self))
+            values[i] = self.If(membership, value, values[i])
+
     def getlist(self, values, item, default=None):
         if not isinstance(item, Number):
             item = Number([1], Domain([item], self))
+        else:
+            item = self.apply(torch.round, item)
         result = None
         for i, membership in item.todict().items():
             #if membership == 0:
             #    continue
-            i = int(round(i))
+            i = int(i)
             if i < 0 or i >= len(values):
                 continue
             membership = Number([membership], Domain([1], self))
