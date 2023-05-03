@@ -2,23 +2,33 @@ from sly import Lexer
 
 
 class DufuzLexer(Lexer):
-    tokens = {NAME, NUMBER, STRING, NOT, AND, OR, IF, WHILE, ELSE, FOR, IN, IMPORT, FROM, AS, DEF, RETURN}
-    ignore = '\t '
-    literals = {'.', '=', '+', '-', '/', '*', '(', ')', ',', ';', '<', '>', '[', ']', '?', '!', ':', '\n'}
+    tokens = {NAME, NUMBER, STRING, NOT, AND, OR, IF, WHILE, ELSE, FOR, IN, IMPORT, FROM, AS, DEF, RETURN, NEQ,
+              LE, GE, LT, GT, EQ, ASSIGN, DOT}
 
-    ELSE = "else"
-    DEF = "def "
-    NOT = "not"
-    AND = "and"
-    OR = "or"
-    IF = "if"
-    WHILE = "while"
-    FOR = "for"
-    IN = "in"
-    IMPORT = "import"
-    RETURN = "return"
-    FROM = "from"
-    AS = "as"
+    ignore = '\t '
+    literals = {'+', '-', '/', '*', '(', ')', '[', ']', '?', ':', ','}
+
+    ELSE = r"else"
+    DEF = r"def "
+    NOT = r"not"
+    AND = r"and"
+    OR = r"or"
+    IF = r"if"
+    WHILE = r"while"
+    FOR = r"for"
+    IN = r"in"
+    IMPORT = r"import"
+    RETURN = r"return"
+    FROM = r"from"
+    AS = r"as"
+    DOT = r"\."
+    NEQ = r"\!\="
+    GE = r"\>\="
+    LE = r"\<\="
+    EQ = r"\=\="
+    GT = r"\>"
+    LT = r"\<"
+    ASSIGN = r"\="
     NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
     STRING = r'\".*?\"'
 

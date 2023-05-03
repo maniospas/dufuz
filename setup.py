@@ -10,7 +10,7 @@ with open("README.md", "r") as file:
 
 setuptools.setup(
     name='dufuz',
-    version='0.0.1',
+    version='0.1.1',
     author="Emmanouil (Manios) Krasanakis",
     author_email="maniospas@hotmail.com",
     description="Discrete numeric fuzzy sets in Python algorithms.",
@@ -23,5 +23,5 @@ setuptools.setup(
          "License :: OSI Approved :: Apache Software License",
          "Operating System :: OS Independent",
      ],
-    install_requires=['numpy', 'torch', 'matplotlib'],
+    install_requires=['numpy', 'torch', 'matplotlib', 'ply'],
  )

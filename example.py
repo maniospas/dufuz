@@ -66,9 +66,9 @@ def bubblesort(values):
         for j in range(i+1, len(values)):
             vali = values[i]
             valj = values[j]
-            comparison = env.lt(vali, valj)
-            values[i] = env.If(comparison, vali, valj)
-            values[j] = env.If(comparison, valj, vali)
+            comparison = vali < valj
+            values[i] = comparison.choice(vali, valj)
+            values[j] = comparison.choose(valj, vali)
 
 
 tic = time()

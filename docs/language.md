@@ -1,8 +1,15 @@
-# DUFuz interpreter
+# DUFuz Interpreter
 
 You can implement numeric fuzzy algorithms
 in an interpreted language that has 
-a high overlap with Python.
+a high overlap with Python. This supports
+natural integration of predicates
+that can not be overriden by the Python API.
+For example, the Python statement
+`z = condition.choose(x, y)` where 
+`condition` is a boolean fuzzy set and `x,y`
+are numeric fuzzy sets is expressed
+as `z = x if condition else y`.
 
 ## Run a script
 
@@ -25,9 +32,10 @@ practices. Current features of the languages are marked:
 - [x] fuzzy list element access 
 - [x] numeric and logical operations
 - [x] method definition
-- [ ] argument defaults and keyword arguments 
-- [ ] calling Python methods and class functions
-- [ ] import of Python packages and methods
+- [ ] argument defaults
+- [x] keyword arguments 
+- [x] call Python methods and class functions
+- [x] import Python packages and methods
 - [ ] fuzzy sets
 - [ ] fuzzy dictionaries
 

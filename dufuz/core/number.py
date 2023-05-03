@@ -35,7 +35,7 @@ class Number:
     def todict(self, threshold=0):
         return dict({k: v for k,v in zip(self.domain.elements.cpu().numpy(), self.values.cpu().numpy()) if v > threshold})
 
-    def choice(self, a, b):
+    def choose(self, a, b):
         return self.env.If(self, a, b)
 
     def __str__(self):

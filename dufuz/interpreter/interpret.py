@@ -30,6 +30,7 @@ class Element:
     def assign(self, value):
         self.executor.spawner.setlist(self.values, self.element, value)
 
+
 class Iter:
     def __init__(self, list):
         self.list = list
@@ -130,6 +131,11 @@ class Executor:
     def fuzzy(self, number, breadth):
         return self.spawner.number(number, breadth=breadth)
 
+    def assignee(self, name):
+        if self.asname:
+            return name
+        return Variable(self, name)
+
     def var(self, name):
         if self.asname:
             return name
@@ -186,7 +192,7 @@ class Executor:
         return x != y
 
     def condition(self, cond, primary, secondary):
-        return cond.choice(primary, secondary)
+        return cond.choose(primary, secondary)
 
     def importmodule(self, name, alias):
         import importlib
@@ -244,7 +250,7 @@ class Func:
                 i += 1
                 continue
             tree = parser.parse(lexer.tokenize(stripped_line))
-            #print(tree)
+            #print(list(lexer.tokenize(stripped_line)))
             if not tree:
                 print(line)
                 raise Exception("Invalid expression at file\""+self.path+"\", line "+str(i))
