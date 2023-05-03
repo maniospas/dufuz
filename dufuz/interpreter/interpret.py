@@ -41,6 +41,10 @@ class Iter:
     def __str__(self):
         return "iter "+str(self.list)
 
+    def assign(self, vals):
+        for var, val in zip(self.list, vals):
+            var.assign(val)
+
 _DUFUZKWARG = list()
 
 
