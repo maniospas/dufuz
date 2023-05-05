@@ -1,5 +1,28 @@
 from dufuz.interpreter.lexer import DufuzLexer
 from dufuz.interpreter.parser import DufuzParser
+from dufuz.core import Number, Domain
+import operator
+import torch
+
+
+class Range:
+    def __init__(self, env):
+        self.env = env
+
+    def __call__(self, a, b=None, inc=None):
+        if b is None:
+            a, b = 0, a
+        if inc is None:
+            inc = 1
+        x = a if isinstance(a, Number) else Number([1], Domain([a], self.env.spawner))
+        while True:
+            next_x = x+inc
+            comparison = self.env.spawner.apply(operator.lt, next_x, b)  # treat crisp arithmetics as fuzzy too
+            if comparison.todict().get(True, 0) <= 0:
+                break
+            toyield = self.env.spawner.If(comparison, x, None)
+            yield toyield
+            x = next_x
 
 
 class Variable:
@@ -54,7 +77,9 @@ class Executor:
         self.env = {"print": print,
                     "int": int,
                     "float": float,
-                    "range": range,
+                    "range": Range(self),
+                    "list": list,
+                    "map": map,
                     "len": len,
                     "str": str,
                     "zip": zip,
@@ -109,7 +134,8 @@ class Executor:
         return self.spawner.Not(value)
 
     def list(self, iterator):
-        assert isinstance(iterator, Iter)
+        if not isinstance(iterator, Iter):
+            return [iterator]
         return iterator.list
 
     def next(self, element, next):
@@ -176,6 +202,9 @@ class Executor:
 
     def sub(self, x, y):
         return x - y
+
+    def neg(self, x):
+        return -x
 
     def div(self, x, y):
         return x / y
@@ -258,7 +287,6 @@ class Func:
             if not tree:
                 print(line)
                 raise Exception("Invalid expression at file\""+self.path+"\", line "+str(i))
-            #print(tree)
             if tree[0] == "def":
                 func_name = tree[1]
                 func_lines = list()

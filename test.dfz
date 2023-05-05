@@ -3,6 +3,7 @@ from timeit import default_timer as time
 import matplotlib.pyplot as plt
 from dufuz.defuzzify import cmean
 
+
 values = [1, 2.5, 4? or 3.5?1.5, 5?]
 random.shuffle(values)
 
@@ -20,7 +21,7 @@ bubblesort(values)
 print("Completed in", time()-start_time, "sec")
 
 _, axs = plt.subplots(len(values), 1, sharex="all", sharey="all")
+print(list(map(cmean, values)))
 for ax, val in zip(axs, values):
-    print(cmean(val))
     val.plot(ax, True)
 plt.show()

@@ -1,0 +1,12 @@
+from dufuz.defuzzify import cmean
+
+n = 10?2 or 3?2
+
+total = 0
+total_list = list()
+for i in range(0, n, 1?):
+    total = total + i*i
+    total_list.append(total)
+
+print(total_list[n-1])
+(total_list[n-1]).plot()

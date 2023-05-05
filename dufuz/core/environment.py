@@ -48,12 +48,6 @@ class Environment:
         # postprocess
         values, elements = self.discretize(values, elements)
         values, elements = self.reduce(values, elements)
-        # find non-zero positions and gather respective values (memberships) and elements (method outputs)
-        if elements.dtype != torch.bool:
-            positions = (values != 0)# > 1.E-12)
-            if positions.size() != values.size():
-                values = torch.masked_select(values, positions)
-                elements = torch.masked_select(elements, positions)
         for monitor in self.monitors:
             monitor.notify(elements.nelement(), None)
         return Number(values, Domain(elements, self))
@@ -67,6 +61,14 @@ class Environment:
         elements = elements[sort_idx]
         elements, unique_idx = _unique(elements)
         values = values[unique_idx]
+
+        # find non-zero positions and gather respective values (memberships) and elements (method outputs)
+        if elements.dtype != torch.bool:
+            positions = (values != 0)# > 1.E-12)
+            if torch.is_same_size(values, elements) and positions.numel() > 0:
+                values = torch.masked_select(values, positions)
+                elements = torch.masked_select(elements, positions)
+
         return values, elements
 
     def point(self, value, membership=1):
@@ -76,13 +78,16 @@ class Environment:
         # self.combine(condition * a, self.Not(condition) * b) is viable only for logical clauses
         if not isinstance(condition, Number):
             condition = Number([1], Domain([condition], self))
-        if not isinstance(a, Number):
+        if b is not None and not isinstance(a, Number):
             a = Number([1], Domain([a], self))
-        if not isinstance(b, Number):
+        if b is not None and not isinstance(b, Number):
             b = Number([1], Domain([b], self))
         ret = None
         for branch, membership in condition.todict().items():
-            term = (a if branch == 1 else b)*Number([membership], Domain([1], self))
+            term = a if branch == 1 else b
+            if term is None:
+                continue
+            term = term*Number([membership], Domain([1], self))
             if ret is None:
                 ret = term
             else:
@@ -106,6 +111,12 @@ class Environment:
 
     def complement(self, a):
         return Number(1-a.values, a.domain)
+
+    def transorm_membership(self, a, transformer):
+        return Number(transformer(a.values), a.domain)
+
+    def nullify(self, a):
+        return Number(torch.zeros(size=a.values.size(), device=a.values.device), a.domain)
 
     def Not(self, a):
         return self.apply(torch.logical_not, a)#Number(1-a.values, a.domain)
@@ -136,6 +147,8 @@ class Environment:
         for i, membership in item.todict().items():
             #if membership == 0:
             #    continue
+            if i != int(i):
+                continue
             i = int(i)
             if i < 0 or i >= len(values):
                 continue
@@ -149,8 +162,10 @@ class Environment:
             item = self.apply(torch.round, item)
         result = None
         for i, membership in item.todict().items():
-            #if membership == 0:
-            #    continue
+            if membership == 0:
+                continue  # TODO: this statement can lead to empty result
+            if i != int(i):
+                continue  # TODO: this statement can lead to empty result
             i = int(i)
             if i < 0 or i >= len(values):
                 continue

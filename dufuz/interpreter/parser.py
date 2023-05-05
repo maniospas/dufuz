@@ -144,6 +144,10 @@ class DufuzParser(Parser):
     def expr(self, p):
         return "sub", p.expr0, p.expr1
 
+    @_('"-" expr')
+    def expr(self, p):
+        return "neg", p.expr
+
     @_('expr "*" expr')
     def expr(self, p):
         return "mul", p.expr0, p.expr1
