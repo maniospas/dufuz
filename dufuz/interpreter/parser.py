@@ -40,6 +40,10 @@ class DufuzParser(Parser):
     def statement(self, p):
         return "importmember", p.namespace, p.NAME0, p.NAME1
 
+    @_('BREAK')
+    def statement(self, p):
+        return "break"
+
     @_('NAME DOT namespace')
     def namespace(self, p):
         return p.NAME + "." + p.namespace
@@ -55,6 +59,10 @@ class DufuzParser(Parser):
     @_('FOR names IN expr ":"')
     def statement(self, p):
         return "for", p.names, p.expr
+
+    @_('WHILE expr ":"')
+    def statement(self, p):
+        return "while", p.expr
 
     @_('NAME')
     def names(self, p):

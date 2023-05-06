@@ -153,7 +153,7 @@ class Executor:
         return self.spawner.getlist(values, element)
 
     def number(self, number):
-        return number
+        return self.spawner.number(number, breadth=0)
 
     def scope(self, result):
         return result
@@ -238,13 +238,14 @@ class Executor:
 
 
 class Func:
-    def __init__(self, path, executor, parser, lexer, lines, args):
+    def __init__(self, path, executor, parser, lexer, lines, args, ret_env=False):
         self.path = path
         self.executor = executor
         self.lines = lines
         self.parser = parser
         self.lexer = lexer
         self.args = args
+        self.ret_env = ret_env
 
     def __call__(self, *args, **kwargs):
         prev_env = self.executor.env
@@ -305,10 +306,57 @@ class Func:
                 func_lines.append("")
                 executor.env[func_name] = Func(func_name, executor, parser, lexer, func_lines, func_args)
                 i -= 1
+            if tree[0] == "while":
+                while_condition = tree[1]
+                while_lines = list()
+                i += 1
+                while i < len(lines):
+                    if not lines[i].strip():
+                        i += 1
+                        continue
+                    depth = len(lines[i])-len(lines[i].lstrip())
+                    if depth <= block:
+                        break
+                    while_lines.append(lines[i])
+                    i += 1
+                while_lines.append("")
+                loop = Func(str(while_condition), executor, parser, lexer, while_lines, [], ret_env=True)
+                appended_env = dict()#{k: v for k, v in self.executor.env.items()}
+                prev_cond = Number([1], Domain([True], self.executor.spawner))
+                while True:
+                    condition = self.executor.run(while_condition)
+                    if not isinstance(condition, Number):
+                        condition = Number([1], Domain([condition], self.executor.spawner))
+                    residual = Number([prev_cond.todict().get(True, 0), 1-prev_cond.todict().get(True, 0)], Domain([True, False], self.executor.spawner))
+                    prev_cond = self.executor.spawner.And(condition, residual)
+                    print(residual, condition, prev_cond)
+                    condition = prev_cond
+                    for k, v in self.executor.env.items():
+                        if isinstance(v, Number) or isinstance(appended_env.get(k, None), Number):
+                            v = condition.choose(None, v)
+                            if k in appended_env:
+                                appended_env[k] = self.executor.spawner.combine(v, appended_env[k])
+                            else:
+                                appended_env[k] = condition.choose(None, v)
+                        else:
+                            appended_env[k] = v
+                    if condition.todict().get(True, 0) == 0:
+                        break
+                    self.executor.env = loop()
+                i -= 1
+                for k, v in appended_env.items():
+                    self.executor.env[k] = v
             elif tree[0] == "return":
                 ret = executor.run(tree[1])
                 self.executor.env = prev_env
                 return ret
+            elif tree[0] == "break":
+                self.executor.env = prev_env
+                internal_env = self.executor.env
+                self.executor.env = prev_env
+                if self.ret_env:
+                    return internal_env
+                return
             elif tree[0] == "for":
                 loops.append(("for", i+1, block, executor.run(tree[1], asvar=True), iter(executor.run(tree[2]))))
                 try:
@@ -324,7 +372,10 @@ class Func:
             else:
                 executor.run(tree)
             i += 1
+        internal_env = self.executor.env
         self.executor.env = prev_env
+        if self.ret_env:
+            return internal_env
         return None
 
 

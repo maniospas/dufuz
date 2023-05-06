@@ -75,10 +75,12 @@ class Environment:
         return Number([membership], Domain([value], self))
 
     def If(self, condition, a, b):
+        if a is None and b is None:
+            return None
         # self.combine(condition * a, self.Not(condition) * b) is viable only for logical clauses
         if not isinstance(condition, Number):
             condition = Number([1], Domain([condition], self))
-        if b is not None and not isinstance(a, Number):
+        if a is not None and not isinstance(a, Number):
             a = Number([1], Domain([a], self))
         if b is not None and not isinstance(b, Number):
             b = Number([1], Domain([b], self))
@@ -122,7 +124,7 @@ class Environment:
         return self.apply(torch.logical_not, a)#Number(1-a.values, a.domain)
 
     def And(self, a, b):
-        return self.apply(operator.mul, a, b)
+        return self.apply(torch.logical_and, a, b)
 
     def Or(self, a, b):
         return self.combine(a, b)#self.apply(lambda x, y: x + y - x * y, a, b)

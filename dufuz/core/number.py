@@ -38,6 +38,9 @@ class Number:
     def choose(self, a, b):
         return self.env.If(self, a, b)
 
+    def is_crisp(self):
+        return torch.sum(self.values) == torch.max(self.values)
+
     def __str__(self):
         return str(self.todict(-1))
 

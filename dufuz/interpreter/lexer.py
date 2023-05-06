@@ -3,23 +3,24 @@ from sly import Lexer
 
 class DufuzLexer(Lexer):
     tokens = {NAME, NUMBER, STRING, NOT, AND, OR, IF, WHILE, ELSE, FOR, IN, IMPORT, FROM, AS, DEF, RETURN, NEQ,
-              LE, GE, LT, GT, EQ, ASSIGN, DOT}
+              LE, GE, LT, GT, EQ, ASSIGN, DOT, BREAK}
 
     ignore = '\t '
     literals = {'+', '-', '/', '*', '(', ')', '[', ']', '?', ':', ','}
 
     ELSE = r"else"
     DEF = r"def "
-    NOT = r"not"
-    AND = r"and"
-    OR = r"or"
-    IF = r"if"
-    WHILE = r"while"
-    FOR = r"for"
-    IN = r"in"
-    IMPORT = r"import"
+    NOT = r"not "
+    AND = r"and "
+    OR = r"or "
+    IF = r"if "
+    WHILE = r"while "
+    FOR = r"for "
+    IN = r"in "
+    IMPORT = r"import "
     RETURN = r"return"
-    FROM = r"from"
+    FROM = r"from "
+    BREAK = r"break"
     AS = r"as"
     DOT = r"\."
     NEQ = r"\!\="
