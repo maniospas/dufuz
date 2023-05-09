@@ -33,7 +33,7 @@ The DUFuz language is planned to replicate the following Python
 practices. Current features of the languages are marked:
 
 - [x] crisp for loops
-- [ ] fuzzy while loops
+- [x] fuzzy while loops
 - [x] fuzzy inline if-else statement comprehension
 - [ ] if-else statements with blocks of code 
 - [x] fuzzy list element access 

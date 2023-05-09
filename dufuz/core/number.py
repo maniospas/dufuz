@@ -25,12 +25,15 @@ class Number:
     def center(self, threshold=1):
         return torch.masked_select(self.domain.elements, (self.values > threshold-1.E-12)).cpu().numpy()
 
-    def plot(self, plt=None, hold=False):
+    def plot(self, plt=None, hold=False, marker='.', **kwargs):
         if plt is None:
             from matplotlib import pyplot as plt
-        plt.scatter(self.domain.elements.cpu().numpy(), self.values.cpu().numpy(), marker='.')
+        plt.scatter(self.domain.elements.cpu().numpy(), self.values.cpu().numpy(), marker=marker, **kwargs)
         if not hold:
             plt.show()
+
+    def complement(self):
+        return self.domain.env.complement(self)
 
     def todict(self, threshold=0):
         return dict({k: v for k, v in zip(self.domain.elements.cpu().numpy(), self.values.cpu().numpy()) if v > threshold})

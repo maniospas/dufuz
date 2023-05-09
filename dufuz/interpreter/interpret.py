@@ -153,7 +153,7 @@ class Executor:
         return self.spawner.getlist(values, element)
 
     def number(self, number):
-        return self.spawner.number(number, breadth=0)
+        return number#self.spawner.number(number, breadth=0)
 
     def scope(self, result):
         return result
@@ -306,7 +306,7 @@ class Func:
                 func_lines.append("")
                 executor.env[func_name] = Func(func_name, executor, parser, lexer, func_lines, func_args)
                 i -= 1
-            if tree[0] == "while":
+            elif tree[0] == "while":
                 while_condition = tree[1]
                 while_lines = list()
                 i += 1
@@ -327,9 +327,10 @@ class Func:
                     condition = self.executor.run(while_condition)
                     if not isinstance(condition, Number):
                         condition = Number([1], Domain([condition], self.executor.spawner))
-                    residual = Number([prev_cond.todict().get(True, 0), 1-prev_cond.todict().get(True, 0)], Domain([True, False], self.executor.spawner))
+                    is_true = prev_cond.todict().get(True, 0)
+                    residual = Number([is_true, self.executor.spawner.memory_logic_not(is_true)], Domain([True, False], self.executor.spawner))
                     prev_cond = self.executor.spawner.And(condition, residual)
-                    print(residual, condition, prev_cond)
+                    #print(residual, condition, prev_cond)
                     condition = prev_cond
                     for k, v in self.executor.env.items():
                         if isinstance(v, Number) or isinstance(appended_env.get(k, None), Number):
@@ -337,7 +338,7 @@ class Func:
                             if k in appended_env:
                                 appended_env[k] = self.executor.spawner.combine(v, appended_env[k])
                             else:
-                                appended_env[k] = condition.choose(None, v)
+                                appended_env[k] = v
                         else:
                             appended_env[k] = v
                     if condition.todict().get(True, 0) == 0:

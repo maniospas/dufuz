@@ -16,10 +16,11 @@ def _unique(x, dim=0, sorted=False):
 
 
 class Environment:
-    def __init__(self, device, tnorm=torch.minimum):
+    def __init__(self, device, tnorm, memory_logic_not):
         self.device = device
         self.monitors = list()
         self.tnorm = tnorm
+        self.memory_logic_not = memory_logic_not
 
     def discretize(self, values, elements):
         #mask = torch.logical_not(torch.isnan(values))
@@ -112,7 +113,7 @@ class Environment:
         return self.apply(operator.eq, a, b)#self.And(self.apply(operator.ge, a, b), self.apply(operator.le, a, b))
 
     def complement(self, a):
-        return Number(1-a.values, a.domain)
+        return Number(self.memory_logic_not(a.values), a.domain)
 
     def transorm_membership(self, a, transformer):
         return Number(transformer(a.values), a.domain)
@@ -134,6 +135,10 @@ class Environment:
             return number2
         if number2 is None:
             return number1
+        if not isinstance(number1, Number):
+            number1 = Number([1], Domain([number1], self))
+        if not isinstance(number2, Number):
+            number2 = Number([1], Domain([number2], self))
         values = torch.concat([number1.values, number2.values])
         elements = torch.concat([number1.domain.elements, number2.domain.elements])
         values, elements = self.reduce(values, elements)
@@ -154,7 +159,7 @@ class Environment:
             i = int(i)
             if i < 0 or i >= len(values):
                 continue
-            membership = Number([membership], Domain([1], self))
+            membership = Number([membership, self.memory_logic_not(membership)], Domain([True, False], self))
             values[i] = self.If(membership, value, values[i])
 
     def getlist(self, values, item, default=None):

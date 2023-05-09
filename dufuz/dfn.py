@@ -1,18 +1,19 @@
 from dufuz.core import Environment, Domain, Number
-from dufuz.tnorm import lukasiewicz
+from dufuz import tnorm, negation
 import torch
 
 
 class DiscreteEnvironment(Environment):
     def __init__(self,
                  device='cuda',
-                 tnorm=lukasiewicz,
+                 tnorm=tnorm.lukasiewicz,
+                 memory_logic_not=negation.lukasiewicz,
                  tol=0.01,
                  breadth=1,
                  lower=None,
                  upper=None,
                  strategy="modulo"):
-        super().__init__(device=device, tnorm=tnorm)
+        super().__init__(device=device, tnorm=tnorm, memory_logic_not=memory_logic_not)
         self.tol = tol
         self.breadth = breadth
         self.lower = lower
