@@ -1,4 +1,15 @@
-# Python API for DUFuz
+# Python Fuzzy Arithmetic API for DUFuz
+
+1. [Purpose](#purpose)
+2. [Example](#example)
+
+## Purpose
+
+The purpose of this API is to support base operations needed by
+DUFuz. However, you can also use it to fastly compute fuzzy
+arithmetics.
+
+## Example
 
 First create a discrete environment for spawning and executing operations 
 on numeric fuzzy sets. Provide a GPU `torch` device to the environment

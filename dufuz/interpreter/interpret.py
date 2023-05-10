@@ -333,7 +333,9 @@ class Func:
                     #print(residual, condition, prev_cond)
                     condition = prev_cond
                     for k, v in self.executor.env.items():
-                        if isinstance(v, Number) or isinstance(appended_env.get(k, None), Number):
+                        if isinstance(v, Number) or isinstance(appended_env.get(k, None), Number) \
+                                or isinstance(v, float) or isinstance(appended_env.get(k, None), float)\
+                                or isinstance(v, int) or isinstance(appended_env.get(k, None), int):
                             v = condition.choose(None, v)
                             if k in appended_env:
                                 appended_env[k] = self.executor.spawner.combine(v, appended_env[k])

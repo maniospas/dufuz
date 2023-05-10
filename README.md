@@ -1,6 +1,5 @@
 # DUFuz
 Incorporating discrete numeric fuzzy sets in Python algorithms.
-These sets are more general than fuzzy numbers.
 
 **Dependencies**: `numpy`, `torch`, `matplotlib`, `ply`<br>
 **Contact**: Manios Krasanakis (maniospas@hotmail.com)<br>
@@ -8,8 +7,8 @@ These sets are more general than fuzzy numbers.
 
 
 ## :rocket: Quickstart
-* [Python API](docs/api.md)
-* [DUFuz Interpreter](docs/language.md)
+* [DUFuz Language Interpreter](docs/language.md)
+* [Python Fuzzy Arithmetic API](docs/api.md)
 
 The code below demonstrates a bubblesort algorithm that runs on
 fuzzy inputs on the DUFuz interpreter.

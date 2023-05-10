@@ -20,7 +20,7 @@ Documentation in the [github](https://github.com/maniospas/dufuz) page.
 
 setuptools.setup(
     name='dufuz',
-    version='0.1.2',
+    version='0.1.3',
     author="Emmanouil (Manios) Krasanakis",
     author_email="maniospas@hotmail.com",
     description="Discrete numeric fuzzy sets in Python algorithms.",

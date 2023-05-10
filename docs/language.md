@@ -1,4 +1,8 @@
-# DUFuz Interpreter
+# DUFuz Language Interpreter
+
+1. [Run a script](#run-a-script)
+2. [Language specification](#language-specification)
+3. [Fuzzy loops](#fuzzy-loops)
 
 You can implement numeric fuzzy algorithms
 in an interpreted language that has 
@@ -29,6 +33,7 @@ on CPUs can be very slow, but if you must do it
 select some coarse tolerance, such as *0.1*.
 
 ## Language specification
+
 The DUFuz language is planned to replicate the following Python
 practices. Current features of the languages are marked:
 
@@ -68,5 +73,25 @@ for val in values:
     print(cmean(val))
 ```
 
+## Fuzzy loops
+
+You can write `while` loops the same way as regular Python.
+If fuzzy conditions are checked, then the confidence of the 
+outcomes is applied to the final assignment of each internal
+variable. Each possible value at break points (the points at
+which there is a possibility of stopping based on the fuzzy 
+contdition) are aggregated via a DUFuz `or`.
 
 
+```python
+from dufuz.defuzzify import wmean
+
+x = 0
+y = 0
+while x < 3.5?:  # x in {[0,1,2]: 0.5, [0,1,2,3]: 1, [0,1,2,3,4]: 0.5}
+    y = y + x
+    x = x + 1
+(x-1).plot()
+y.plot()
+print(wmean(y))
+```
