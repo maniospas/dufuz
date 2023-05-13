@@ -5,6 +5,8 @@ Incorporating discrete numeric fuzzy sets in Python algorithms.
 **Contact**: Manios Krasanakis (maniospas@hotmail.com)<br>
 **License**: Apache 2
 
+*This project is currently in unstable alpha.*
+
 
 ## :rocket: Quickstart
 * [DUFuz Language Interpreter](docs/language.md)
