@@ -16,13 +16,12 @@ class Range:
             inc = 1
         x = a if isinstance(a, Number) else Number([1], Domain([a], self.env.spawner))
         while True:
-            next_x = x+inc
-            comparison = self.env.spawner.apply(operator.lt, next_x, b)  # treat crisp arithmetics as fuzzy too
+            comparison = self.env.spawner.apply(operator.lt, x, b)  # treat crisp arithmetics as fuzzy too
             if comparison.todict().get(True, 0) <= 0:
                 break
             toyield = self.env.spawner.If(comparison, x, None)
             yield toyield
-            x = next_x
+            x = x + inc
 
 
 class Variable:

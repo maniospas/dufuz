@@ -36,7 +36,7 @@ The DUFuz interpreter provides a pure Pythonic representation
 of these operations.
 
 As a demonstration. the following code implements the 
-bubblesort algorithm for a list of fuzzy numbers.
+bubblesort algorithm for a list of fuzzy numbers in native Python.
 
 ```python
 def bubblesort(values):

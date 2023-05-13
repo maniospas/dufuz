@@ -8,6 +8,7 @@ values = [1, 2.5, 4? or 3.5?1.5, 5?]
 random.shuffle(values)
 
 def bubblesort(values):
+    print(list(map(cmean, values)))
     for i in range(len(values)):
         for j in range(i+1, len(values)):
             vali = values[i]
@@ -23,5 +24,5 @@ print("Completed in", time()-start_time, "sec")
 _, axs = plt.subplots(len(values), 1, sharex="all", sharey="all")
 print(list(map(cmean, values)))
 for ax, val in zip(axs, values):
-    val.plot(ax, True)
+    val.plot(ax, hold=True)
 plt.show()

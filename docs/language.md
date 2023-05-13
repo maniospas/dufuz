@@ -28,7 +28,7 @@ install on your machines.
 
 :warning: For fast running time of fuzzy arithmetics,
 ensure that *tol<sup> -2</sup>* is smaller
-than then number of GPU cores. Running the interpreter
+than the number of GPU cores. Running the interpreter
 on CPUs can be very slow, but if you must do it
 select some coarse tolerance, such as *0.1*.
 
@@ -37,7 +37,8 @@ select some coarse tolerance, such as *0.1*.
 The DUFuz language is planned to replicate the following Python
 practices. Current features of the languages are marked:
 
-- [x] crisp for loops
+- [x] crisp for loops 
+- [ ] fuzzy for loops
 - [x] fuzzy while loops
 - [x] fuzzy inline if-else statement comprehension
 - [ ] if-else statements with blocks of code 
